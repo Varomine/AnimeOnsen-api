@@ -45,6 +45,7 @@ loadMapping();
 const CLOUDFLARE_PROXY_URL = process.env.CLOUDFLARE_PROXY_URL || '';
 const apiHost = CLOUDFLARE_PROXY_URL ? CLOUDFLARE_PROXY_URL.replace(/\/$/, '') : 'https://api.animeonsen.xyz';
 const searchHost = CLOUDFLARE_PROXY_URL ? `${CLOUDFLARE_PROXY_URL.replace(/\/$/, '')}/search` : 'https://search.animeonsen.xyz';
+const webHost = CLOUDFLARE_PROXY_URL ? `${CLOUDFLARE_PROXY_URL.replace(/\/$/, '')}/web` : 'https://www.animeonsen.xyz';
 
 // Token caching variables
 let cachedToken = null;
@@ -58,7 +59,7 @@ async function getAuthToken() {
     
     console.log("Fetching new AnimeOnsen session token...");
     try {
-        const response = await axios.get('https://www.animeonsen.xyz/', {
+        const response = await axios.get(`${webHost}/`, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
             }
