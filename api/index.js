@@ -146,6 +146,9 @@ app.get('/api/search', async (req, res) => {
             limit: req.query.limit ? parseInt(req.query.limit) : 20
         }, {
             headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Referer': 'https://www.animeonsen.xyz/',
+                'Origin': 'https://www.animeonsen.xyz',
                 'Authorization': `Bearer ${apiKey}`,
                 'Content-Type': 'application/json'
             }
@@ -166,6 +169,7 @@ app.get('/api/anime/:contentId', async (req, res) => {
         const response = await axios.get(`https://api.animeonsen.xyz/v4/content/${contentId}`, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Referer': 'https://www.animeonsen.xyz/',
                 'Authorization': `Bearer ${token}`
             }
         });
@@ -184,6 +188,7 @@ app.get('/api/anime/:contentId/episodes', async (req, res) => {
         const response = await axios.get(`https://api.animeonsen.xyz/v4/content/${contentId}/video/1`, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Referer': 'https://www.animeonsen.xyz/',
                 'Authorization': `Bearer ${token}`
             }
         });
@@ -219,6 +224,7 @@ app.get('/api/anime/:contentId/episode/:episodeNumber', async (req, res) => {
         const response = await axios.get(`https://api.animeonsen.xyz/v4/content/${contentId}/video/${episodeNumber}`, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Referer': 'https://www.animeonsen.xyz/',
                 'Authorization': `Bearer ${token}`
             }
         });
@@ -383,6 +389,7 @@ app.get('/api/source/:malId', async (req, res) => {
         const response = await axios.get(`https://api.animeonsen.xyz/v4/content/${contentId}`, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Referer': 'https://www.animeonsen.xyz/',
                 'Authorization': `Bearer ${token}`
             }
         });
@@ -411,6 +418,7 @@ app.get('/api/source/:malId/episode/:episodeNumber', async (req, res) => {
         const response = await axios.get(`https://api.animeonsen.xyz/v4/content/${contentId}/video/${episodeNumber}`, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Referer': 'https://www.animeonsen.xyz/',
                 'Authorization': `Bearer ${token}`
             }
         });
