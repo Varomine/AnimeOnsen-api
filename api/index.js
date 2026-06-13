@@ -157,7 +157,11 @@ app.get('/api/search', async (req, res) => {
         res.json(response.data);
     } catch (error) {
         console.error("Search failed:", error.message);
-        res.status(500).json({ error: "Search query failed.", details: error.message });
+        res.status(error.response?.status || 500).json({ 
+            error: "Search query failed.", 
+            details: error.message,
+            response: error.response ? error.response.data : null
+        });
     }
 });
 
@@ -176,7 +180,11 @@ app.get('/api/anime/:contentId', async (req, res) => {
         res.json(response.data);
     } catch (error) {
         console.error(`Fetching details failed for ${contentId}:`, error.message);
-        res.status(error.response?.status || 500).json({ error: "Failed to fetch anime details.", details: error.message });
+        res.status(error.response?.status || 500).json({ 
+            error: "Failed to fetch anime details.", 
+            details: error.message,
+            response: error.response ? error.response.data : null
+        });
     }
 });
 
@@ -212,7 +220,11 @@ app.get('/api/anime/:contentId/episodes', async (req, res) => {
         });
     } catch (error) {
         console.error(`Fetching episodes list failed for ${contentId}:`, error.message);
-        res.status(error.response?.status || 500).json({ error: "Failed to fetch episodes list.", details: error.message });
+        res.status(error.response?.status || 500).json({ 
+            error: "Failed to fetch episodes list.", 
+            details: error.message,
+            response: error.response ? error.response.data : null
+        });
     }
 });
 
@@ -253,7 +265,11 @@ app.get('/api/anime/:contentId/episode/:episodeNumber', async (req, res) => {
         });
     } catch (error) {
         console.error(`Fetching episode stream failed for ${contentId} ep ${episodeNumber}:`, error.message);
-        res.status(error.response?.status || 500).json({ error: "Failed to fetch episode stream details.", details: error.message });
+        res.status(error.response?.status || 500).json({ 
+            error: "Failed to fetch episode stream details.", 
+            details: error.message,
+            response: error.response ? error.response.data : null
+        });
     }
 });
 
@@ -400,7 +416,11 @@ app.get('/api/source/:malId', async (req, res) => {
         });
     } catch (error) {
         console.error(`Fetching details failed for resolved MAL ID ${malId} (Content: ${contentId}):`, error.message);
-        res.status(error.response?.status || 500).json({ error: "Failed to fetch details for resolved MAL ID source.", details: error.message });
+        res.status(error.response?.status || 500).json({ 
+            error: "Failed to fetch details for resolved MAL ID source.", 
+            details: error.message,
+            response: error.response ? error.response.data : null
+        });
     }
 });
 
@@ -448,7 +468,11 @@ app.get('/api/source/:malId/episode/:episodeNumber', async (req, res) => {
         });
     } catch (error) {
         console.error(`Fetching episode stream failed for resolved MAL ID ${malId} (Content: ${contentId}) ep ${episodeNumber}:`, error.message);
-        res.status(error.response?.status || 500).json({ error: "Failed to fetch episode stream details.", details: error.message });
+        res.status(error.response?.status || 500).json({ 
+            error: "Failed to fetch episode stream details.", 
+            details: error.message,
+            response: error.response ? error.response.data : null
+        });
     }
 });
 
