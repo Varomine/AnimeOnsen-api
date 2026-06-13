@@ -1,0 +1,21 @@
+{
+  "name": "animeonsen-api",
+  "version": "1.0.0",
+  "description": "Ready-to-deploy API wrapper for AnimeOnsen with MyAnimeList ID mapping",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node api/index.js",
+    "update-cache": "node scripts/update-cache.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "author": "Antigravity",
+  "license": "MIT"
+}
