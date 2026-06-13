@@ -157,7 +157,56 @@ The MAL mappings are stored locally in `mapping.json` for lightning-fast lookups
 - **CLI Command:** `npm run update-cache`
 - **HTTP Request:** Send a `POST` request to `http://localhost:3000/api/update-cache`.
 
-### Deploying to GitHub / Vercel
-The repository is fully configured with `vercel.json`.
+### Deploying to Vercel (Cloudflare Bypass)
+Hosting platforms like Vercel run on datacenter IP ranges (AWS) which are blocked by Cloudflare's bot protection on the AnimeOnsen endpoints, returning a `403 Forbidden` status. 
+
+To bypass this block, you can deploy a free **Cloudflare Worker** to act as a secure proxy (since Cloudflare Workers run on Cloudflare's own network and are never challenged or blocked).
+
+#### 1. Setup Cloudflare Worker Proxy
+1. Sign up for a free account on the [Cloudflare Dashboard](https://dash.cloudflare.com/).
+2. Navigate to **Workers & Pages** -> **Create application** -> **Create Worker**.
+3. Deploy the worker and click **Edit Code**.
+4. Replace the worker code with the following proxy script:
+   ```javascript
+   export default {
+     async fetch(request, env, ctx) {
+       const url = new URL(request.url);
+       let targetUrl = "";
+       
+       if (url.pathname.startsWith('/search')) {
+         targetUrl = "https://search.animeonsen.xyz" + url.pathname + url.search;
+       } else if (url.pathname.startsWith('/web')) {
+         const cleanPath = url.pathname.substring(4);
+         targetUrl = "https://www.animeonsen.xyz" + cleanPath + url.search;
+       } else {
+         targetUrl = "https://api.animeonsen.xyz" + url.pathname + url.search;
+       }
+       
+       const newHeaders = new Headers(request.headers);
+       newHeaders.set("Referer", "https://www.animeonsen.xyz/");
+       newHeaders.set("Origin", "https://www.animeonsen.xyz");
+       newHeaders.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+       
+       const modifiedRequest = new Request(targetUrl, {
+         method: request.method,
+         headers: newHeaders,
+         body: request.body,
+         redirect: "follow"
+       });
+       
+       const response = await fetch(modifiedRequest);
+       const modifiedResponse = new Response(response.body, response);
+       modifiedResponse.headers.set("Access-Control-Allow-Origin", "*");
+       return modifiedResponse;
+     }
+   };
+   ```
+5. Click **Save and Deploy** and copy the Worker URL (e.g. `https://animeonsen-proxy.<username>.workers.dev`).
+
+#### 2. Configure Vercel
 1. Push this directory to your GitHub repository.
-2. Go to **Vercel**, import the repository, and click **Deploy**. Vercel will automatically configure the serverless function and route all traffic to `index.js`.
+2. Import the repository in **Vercel**.
+3. In your Vercel project settings, go to **Settings** -> **Environment Variables** and add:
+   - **Key:** `CLOUDFLARE_PROXY_URL`
+   - **Value:** `https://animeonsen-proxy.<username>.workers.dev` (your Worker URL)
+4. Trigger a new deployment on Vercel to load the environment variable. Vercel will now route all requests through your proxy, bypassing Cloudflare's bot detection.
