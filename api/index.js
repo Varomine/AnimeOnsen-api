@@ -41,6 +41,11 @@ fs.watch(path.dirname(MAPPING_FILE), (eventType, filename) => {
 // Load mapping on startup
 loadMapping();
 
+// Optional Cloudflare Worker proxy configuration to bypass Vercel datacenter IP blocks
+const CLOUDFLARE_PROXY_URL = process.env.CLOUDFLARE_PROXY_URL || '';
+const apiHost = CLOUDFLARE_PROXY_URL ? CLOUDFLARE_PROXY_URL.replace(/\/$/, '') : 'https://api.animeonsen.xyz';
+const searchHost = CLOUDFLARE_PROXY_URL ? `${CLOUDFLARE_PROXY_URL.replace(/\/$/, '')}/search` : 'https://search.animeonsen.xyz';
+
 // Token caching variables
 let cachedToken = null;
 let tokenExpiry = 0;
@@ -138,10 +143,9 @@ app.get('/api/search', async (req, res) => {
     }
     
     try {
-        const host = 'https://search.animeonsen.xyz';
         const apiKey = '0e36d0275d16b40d7cf153634df78bc229320d073f565db2aaf6d027e0c30b13';
         
-        const response = await axios.post(`${host}/indexes/content/search`, {
+        const response = await axios.post(`${searchHost}/indexes/content/search`, {
             q: query,
             limit: req.query.limit ? parseInt(req.query.limit) : 20
         }, {
@@ -170,7 +174,7 @@ app.get('/api/anime/:contentId', async (req, res) => {
     const { contentId } = req.params;
     try {
         const token = await getAuthToken();
-        const response = await axios.get(`https://api.animeonsen.xyz/v4/content/${contentId}`, {
+        const response = await axios.get(`${apiHost}/v4/content/${contentId}`, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                 'Referer': 'https://www.animeonsen.xyz/',
@@ -193,7 +197,7 @@ app.get('/api/anime/:contentId/episodes', async (req, res) => {
     const { contentId } = req.params;
     try {
         const token = await getAuthToken();
-        const response = await axios.get(`https://api.animeonsen.xyz/v4/content/${contentId}/video/1`, {
+        const response = await axios.get(`${apiHost}/v4/content/${contentId}/video/1`, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                 'Referer': 'https://www.animeonsen.xyz/',
@@ -363,7 +367,7 @@ app.get('/api/subtitles/:contentId/:lang/:episode', async (req, res) => {
     const { contentId, lang, episode } = req.params;
     try {
         const token = await getAuthToken();
-        const response = await axios.get(`https://api.animeonsen.xyz/v4/subtitles/${contentId}/${lang}/${episode}`, {
+        const response = await axios.get(`${apiHost}/v4/subtitles/${contentId}/${lang}/${episode}`, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                 'Authorization': `Bearer ${token}`,
@@ -402,7 +406,7 @@ app.get('/api/source/:malId', async (req, res) => {
     
     try {
         const token = await getAuthToken();
-        const response = await axios.get(`https://api.animeonsen.xyz/v4/content/${contentId}`, {
+        const response = await axios.get(`${apiHost}/v4/content/${contentId}`, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                 'Referer': 'https://www.animeonsen.xyz/',
@@ -435,7 +439,7 @@ app.get('/api/source/:malId/episode/:episodeNumber', async (req, res) => {
     
     try {
         const token = await getAuthToken();
-        const response = await axios.get(`https://api.animeonsen.xyz/v4/content/${contentId}/video/${episodeNumber}`, {
+        const response = await axios.get(`${apiHost}/v4/content/${contentId}/video/${episodeNumber}`, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                 'Referer': 'https://www.animeonsen.xyz/',
